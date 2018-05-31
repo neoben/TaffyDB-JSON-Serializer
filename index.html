@@ -4,12 +4,16 @@
 		<script src="lib/taffy.js"></script>
 		<script src="lib/taffy_serializer.js"></script>
 		<script>
+		function write_callback(response) {
+			/* XXX remove log */
+			console.log("write callback", response);
+		};
 		var ret;
 		var db = TAFFY([{name:"New York",state:"WA"},{name:"Las Vegas",state:"NV"},{name:"Boston",state:"MA"}]);
 		db.insert({name:"Portland", state:"OR"});
 		var records = db().get();
 		var json_records = JSON.stringify(records);
-		write_json_db("/tmp/test.log", json_records);
+		write_json_db("/tmp/test.log", json_records, write_callback);
 		</script>
 	</head>
 	<body>
