@@ -8,12 +8,28 @@
 			/* XXX remove log */
 			console.log("write callback", response);
 		};
+
+		function read_callback(response) {
+			/* XXX remove log */
+			console.log("read callback", response);
+
+			var records = JSON.parse(response.json_content);
+			var db = TAFFY(records);
+
+			/* XXX test log */
+			db().each(function (record, recordnumber) {
+				console.log("read record", record);
+				console.log("read recordnumber)", recordnumber);
+			});
+		}
+
 		var ret;
 		var db = TAFFY([{name:"New York",state:"WA"},{name:"Las Vegas",state:"NV"},{name:"Boston",state:"MA"}]);
 		db.insert({name:"Portland", state:"OR"});
 		var records = db().get();
 		var json_records = JSON.stringify(records);
 		write_json_db("/tmp/test.log", json_records, write_callback);
+		read_json_db("/tmp/test.log", read_callback);
 		</script>
 	</head>
 	<body>
