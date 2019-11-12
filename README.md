@@ -2,4 +2,11 @@
 
 JSON serializer framework to read/write small JSON database files using TaffyDB APIs.
 
-Work in progress....
+## Test
+
+Launch a local webserver using **webserver-php.sh** bash script, e.g.:
+
+*./webserver-php.sh 127.0.0.1:9000*
+
+Open the choosed ip address and port on the web browser.
+
