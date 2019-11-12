@@ -1,38 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 TRANSITIONAL//EN"
+"http://www.w3.org/tr/html4/loose.dtd">
 <html>
-	<head>
-		<script src="lib/jquery-3.3.1.min.js"></script>
-		<script src="lib/taffy.js"></script>
-		<script src="lib/taffy_serializer.js"></script>
-		<script>
-		function write_callback(response) {
-			/* XXX remove log */
-			console.log("write callback", response);
-		};
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+<title>Taffydb JSON Serialiser Test Page</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<script src="lib/jquery-3.3.1.min.js"></script>
+<script src="lib/taffy.js"></script>
+<script src="lib/taffy_serializer.js"></script>
+<script type="text/javascript">
 
-		function read_callback(response) {
-			/* XXX remove log */
-			console.log("read callback", response);
+function write_callback(response) {
+	console.log("write callback", response);
+	
+	if (response.success == 1) {
+		alert("JSON has been written to ./lib/test/test.log with success!");
+	} else {
+		alert("Failed to write JSON to ./lib/test/test.log");
+	}
+};
 
-			var records = JSON.parse(response.json_content);
-			var db = TAFFY(records);
+function write_test() {
+	var field1 = $('#field1').val();
+	var field2 = $('#field2').val();
+	
+	if(field1 === '' || field2 === '') {
+		alert("Fields cannot be empty!");
+		return;
+	}
+	
+	var db = TAFFY([{f1:"base1", f2:"base2"}]);
+	db.insert({f1:field1, f2:field2});
+	var records = db().get();
+	var json_records = JSON.stringify(records);
+	write_json_db("./test/test.log", json_records, write_callback);
+}
 
-			/* XXX test log */
-			db().each(function (record, recordnumber) {
-				console.log("read record", record);
-				console.log("read recordnumber)", recordnumber);
-			});
-		}
+function read_callback(response) {
+	console.log("read callback", response);
+	
+	var records = JSON.parse(response.json_content);
+	var db = TAFFY(records);
 
-		var ret;
-		var db = TAFFY([{name:"New York",state:"WA"},{name:"Las Vegas",state:"NV"},{name:"Boston",state:"MA"}]);
-		db.insert({name:"Portland", state:"OR"});
-		var records = db().get();
-		var json_records = JSON.stringify(records);
-		write_json_db("/tmp/test.log", json_records, write_callback);
-		read_json_db("/tmp/test.log", read_callback);
-		</script>
-	</head>
-	<body>
-	</body>
-				
+	db().each(function (record, recordnumber) {
+		console.log("read record", record);
+		console.log("read recordnumber)", recordnumber);
+	});
+	
+	content = response.json_content;
+	alert("File ./lib/test/test.log JSON: " + content);
+}
+
+function read_test() {
+	read_json_db("./test/test.log", read_callback);
+}
+
+$(document).ready(function() {
+	/* nothing to do for the moment */
+});
+
+</script>
+</head>
+<body>
+<center>
+<h1>Taffydb JSON Serialiser Test Page</h1>
+<table style="border: lightgray solid 2px; width: 600px">
+    <tr>
+	<td align="center" style="border: lightgray solid 2px; height: 60px;">
+		<b>Filed1:</b> <input type="text" id="field1" style="width: 200px">
+	</td>
+	</tr>
+	<tr>
+	<td align="center" style="border: lightgray solid 2px; height: 60px;">
+		<b>Filed2:</b> <input type="text" id="field2" style="width: 200px">
+	</td>
+	</tr>
+	<tr>
+	<td align="center" style="border: lightgray solid 2px; height: 80px;">
+		<input type="Submit" value="Write Test" id="write_test" onclick="write_test()" style="border-radius: 6px; padding: 12px 30px;">
+	</td>
+	</tr>
+	<tr>
+	<td align="center" style="border: lightgray solid 2px; height: 80px;">
+		<input type="Submit" value="Read Test" id="read_test" onclick="read_test()" style="border-radius: 6px; padding: 12px 30px;">
+	</td>
+	</tr>
+</table>
+<center>                                                                                              
+</body>
 </html>
